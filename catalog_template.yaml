@@ -1,0 +1,62 @@
+name: "Blueprint_Basic_Catalog_Example_Variation3"
+schema_version: "1.0.0"
+description: "Simple two module blueprint. Deploys Resource Group and COS bucket"
+type: "blueprint"
+inputs:
+  - name: resource_group_name
+  - name: provision_rg
+  - name: cos_instance_name
+  - name: cos_storage_plan
+outputs:
+  - name: cos_id
+    value: $module.basic-cos-storage-variation3.outputs.cos_id
+settings:
+  - name: TF_VERSION
+    value: 1.0
+modules:
+  - name: basic-resource-group-variation3
+    module_type: terraform
+    source:
+      source_type: github
+      git:
+        git_repo_url: "https://github.com/Cloud-Schematics/blueprint-example-modules/tree/main/IBM-ResourceGroup"
+        git_branch: main
+    inputs:
+      - name: provision
+        value: $blueprint.provision_rg
+      - name: name
+        value: $blueprint.resource_group_name
+    outputs:
+      - name: resource_group_name
+      - name: resource_group_id
+  - name: basic-cos-storage-variation3
+    layer: DB
+    module_type: terraform
+    source:
+      source_type: catalog
+      catalog:
+        catalog_id: "bd645a7e-4d15-4cf5-a6be-d60280e8013c"
+        offering_name: "blueprint-basic-example"
+        offering_version: "0.0.5"
+        offering_version_flavour_name: "ibm-storage"
+    inputs:
+      - name: cos_instance_name
+        value: $blueprint.cos_instance_name
+      - name: cos_storage_plan
+        value: $blueprint.cos_storage_plan
+      - name: cos_single_site_loc
+        value: "ams03"
+      - name: resource_group_id
+        value: $module.basic-resource-group-variation3.outputs.resource_group_id
+    injectors:
+      - tft_git_url: "https://github.com/Cloud-Schematics/tf-templates"
+        tft_name: "ibm"
+        injection_type: override
+        tft_parameters:
+          - name: provider_version
+            value: 1.38.2
+          - name: provider_source
+            value: IBM-Cloud/ibm
+    outputs:
+      - name: cos_id
+      - name: cos_crn
