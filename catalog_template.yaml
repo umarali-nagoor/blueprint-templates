@@ -39,7 +39,7 @@ modules:
         offering_name: "slz-vpc-with-vsis"
         offering_version: "v1.13.3"
         offering_version_flavour_name: "standard"
-        Offering_kind: "terraform"
+        offering_kind: "terraform"
     inputs:
       - name: cos_instance_name
         value: $blueprint.cos_instance_name
