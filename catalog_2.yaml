@@ -42,6 +42,7 @@ modules:
         offering_name: "blueprint-basic-example"
         offering_version: "0.0.5"
         offering_version_flavour_name: "ibm-storage"
+        offering_kind: "terraform"
     inputs:
       - name: cos_instance_name
         value: $blueprint.cos_instance_name
